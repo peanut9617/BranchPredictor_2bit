@@ -20,7 +20,7 @@ struct Instruction {
 	int InputA_Reg;
 	int InputB_Reg;
 	int immed; // immediate number
-	string D_Addr; // ­n¸õ¥h­ş¸Ì¡A³o­ÓªºÀx¦sªkÁÙ­n·Ğ´o
+	string D_Addr; // è¦è·³å»å“ªè£¡ï¼Œé€™å€‹çš„å„²å­˜æ³•é‚„è¦ç…©æƒ±
 }; // 
 
 struct Jump_Addr {
@@ -34,19 +34,19 @@ vector<int>Reg;
 vector<Instruction>Inst;
 vector<Jump_Addr>jump_addr;
 
-void string_cut(string, int); // ¶i¦æ¦r¦ê¤Á³Î
-void Data_Saving(string, int, int); // ¶i¦æ¦r²Å§P§O
+void string_cut(string, int); // é€²è¡Œå­—ä¸²åˆ‡å‰²
+void Data_Saving(string, int, int); // é€²è¡Œå­—ç¬¦åˆ¤åˆ¥
 void Calculating_Assembly(int);
 int Find_matching_addr(string);
 void TBH_predict(int, int, char);
 
 int main()
 {
-	// ªì©l¤Æ20­ÓRegister
+	// åˆå§‹åŒ–20å€‹Register
 	for (int i = 0; i < 20; i++)
 		Reg.push_back(0);
 
-	// ¨M©wentryªº­Ó¼Æ¨Ãªì©l¤Æ
+	// æ±ºå®šentryçš„å€‹æ•¸ä¸¦åˆå§‹åŒ–
 	int entry_number = 0;
 	cout << "Please input the entry number: ";
 	cin >> entry_number;
@@ -54,12 +54,12 @@ int main()
 	for (int i = 0; i < entry_number; i++)
 		Tbh.push_back(initial);
 
-	// ¤å¥»Åª¨ú»P¥á¦r¦ê³B²z
+	// æ–‡æœ¬è®€å–èˆ‡ä¸Ÿå­—ä¸²è™•ç†
 	int inst_counter = 0;
 	string content;
-	ifstream myfile("ASSEMBLY.txt"); // ifstream myfile("ASSEMBLY_Test.txt");
+	ifstream myfile("RISCV.txt"); // ifstream myfile("ASSEMBLY_Test.txt");
 	if (myfile.is_open())
-		while (getline(myfile, content)) // ¥i¥H¤@¦¸Åª¤@¦æ
+		while (getline(myfile, content)) // å¯ä»¥ä¸€æ¬¡è®€ä¸€è¡Œ
 		{
 			Inst_history.push_back(content);
 			string_cut(content, inst_counter);
@@ -84,7 +84,7 @@ int main()
 	system("pause");
 }
 
-void string_cut(string content, int inst_n) // ¶i¦æ¦r¦ê³B²z
+void string_cut(string content, int inst_n) // é€²è¡Œå­—ä¸²è™•ç†
 {
 	Instruction inst = { "", "", -1, -1, -1, NULL, "" };
 	Inst.push_back(inst);
@@ -92,7 +92,7 @@ void string_cut(string content, int inst_n) // ¶i¦æ¦r¦ê³B²z
 	// cout << "Hello World!\n";
 	string extract = "";
 
-	// ºI¥X¤@¬q¤å¦r
+	// æˆªå‡ºä¸€æ®µæ–‡å­—
 	while (true) {
 		int start = content.find_first_not_of(" \t,:"); //cout << start << "\t";
 		int end = content.find_first_of(" \t,:\n"); //cout << end << "\t";
@@ -101,10 +101,10 @@ void string_cut(string content, int inst_n) // ¶i¦æ¦r¦ê³B²z
 		if (end == -1)
 			return;
 
-		//¹ï¦r¦ê°µ¾ã²z
+		//å°å­—ä¸²åšæ•´ç†
 		content = content.substr(end, content.length() - extract.length());
 		int split_n = content.find_first_not_of("\t, :");
-		if (split_n == string::npos) // ¦pªG¤w¸g¨ì¦r¦ê§À¤Ú´N¸õ¥X
+		if (split_n == string::npos) // å¦‚æœå·²ç¶“åˆ°å­—ä¸²å°¾å·´å°±è·³å‡º
 			return;
 		content = content.substr(split_n, content.length() - split_n + 1);
 		//cout << "." << content << endl;
@@ -121,7 +121,7 @@ void Data_Saving(string s, int inst, int rest_n)
 		return;
 	}
 
-	if ((s.find("Loop") != string::npos) || (s.find("End") != string::npos)) // ¦pªGType¬°ªÅ¡A´N¬O¤@­Ó¸õÅDÂI
+	if ((s.find("Loop") != string::npos) || (s.find("End") != string::npos)) // å¦‚æœTypeç‚ºç©ºï¼Œå°±æ˜¯ä¸€å€‹è·³èºé»
 	{
 		Inst[inst].D_Addr = s;
 		if (Inst[inst].Type != "")
@@ -131,7 +131,7 @@ void Data_Saving(string s, int inst, int rest_n)
 		return;
 	}
 
-	stringstream geek(s); // ¨ú¥Ximmediate
+	stringstream geek(s); // å–å‡ºimmediate
 	int x;
 	if (geek >> x) {
 		Inst[inst].immed = x;
@@ -257,27 +257,27 @@ int Find_matching_addr(string addr)
 
 void TBH_predict(int instruction_number, int entry, char outcome)
 {
-	// ®Ú¾Úhistory°µ¥Xpredict
+	// æ ¹æ“šhistoryåšå‡ºpredict
 	int current_h = Tbh[entry].history[0] * 2 + Tbh[entry].history[1];
 	char predict = (Tbh[entry].CNT[current_h] >= 2) ? 'T' : 'N';
 
-	// ®Ú¾Úpredict»P¿é¤Jªºoutcome§PÂ_¦³¨S¦³¹w´ú¥¿½T
+	// æ ¹æ“špredictèˆ‡è¼¸å…¥çš„outcomeåˆ¤æ–·æœ‰æ²’æœ‰é æ¸¬æ­£ç¢º
 	bool guess = (outcome == predict) ? true : false;
 	if (guess == false)
 		Tbh[entry].mis_pre++;
 
-	// §ó·sHistoryªº­È
+	// æ›´æ–°Historyçš„å€¼
 	Tbh[entry].history[0] = Tbh[entry].history[1];
 	Tbh[entry].history[1] = (outcome == 'T') ? 1 : 0;
 
-	// ®Ú¾Úoutcome§ïÅÜ§Ú­ÌªºTwo Bit History
+	// æ ¹æ“šoutcomeæ”¹è®Šæˆ‘å€‘çš„Two Bit History
 	if (outcome == 'T')
 		(Tbh[entry].CNT[current_h])++;
 	if (outcome == 'N')
 		(Tbh[entry].CNT[current_h])--;
 
 
-	// Åv­«­×¥¿
+	// æ¬Šé‡ä¿®æ­£
 	if (Tbh[entry].CNT[current_h] > 3)
 		Tbh[entry].CNT[current_h] = 3;
 	if (Tbh[entry].CNT[current_h] < 0)
@@ -314,7 +314,7 @@ void TBH_predict(int instruction_number, int entry, char outcome)
 
 }
 
-// ¡i¦n¥ÎªºªF¦è¡j
+// ã€å¥½ç”¨çš„æ±è¥¿ã€‘
 //string delimiter = " ";
 //size_t pos;
 //std::string token;
