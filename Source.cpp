@@ -19,9 +19,9 @@ struct Instruction {
 	int D_Reg;
 	int InputA_Reg;
 	int InputB_Reg;
-	int immed; // immediate number
-	string D_Addr; // 要跳去哪裡，這個的儲存法還要煩惱
-}; // 
+	int immed;			// immediate number
+	string D_Addr;		// 要跳去哪裡，這個的儲存法還要煩惱
+};
 
 struct Jump_Addr {
 	string addr;
@@ -57,9 +57,9 @@ int main()
 	// 文本讀取與丟字串處理
 	int inst_counter = 0;
 	string content;
-	ifstream myfile("RISCV.txt"); // ifstream myfile("ASSEMBLY_Test.txt");
+	ifstream myfile("RISCV.txt");			// ifstream myfile("ASSEMBLY_Test.txt");
 	if (myfile.is_open())
-		while (getline(myfile, content)) // 可以一次讀一行
+		while (getline(myfile, content))		// 可以一次讀一行
 		{
 			Inst_history.push_back(content);
 			string_cut(content, inst_counter);
@@ -70,16 +70,16 @@ int main()
 
 	// Print out all the enrty histories
 	int sum_misprediction = 0;
-	cout << endl << endl << endl;
+	cout << endl;
 	for (int i = 0; i < Tbh.size(); i++) {
-		cout << "Entry number: " << (i + 1) << endl;
+		cout << "entry : " << (i + 1) << endl;
 		for (int j = 0; j < Tbh[i].h.size(); j++)
 			cout << Tbh[i].h[j] << endl;
 
 		cout << "Misprediction number: " << Tbh[i].mis_pre << endl << endl << endl;
 		sum_misprediction = sum_misprediction + Tbh[i].mis_pre;
 	}
-	cout << "Sum misprediction number: " << sum_misprediction << endl << "OVER" << endl; // cout << Reg[2] << "\t" << Reg[3] << "\t" << Reg[4]; // Debug
+	cout << "Sum misprediction number: " << sum_misprediction << endl << "OVER" << endl;
 
 	system("pause");
 }
@@ -89,13 +89,12 @@ void string_cut(string content, int inst_n) // 進行字串處理
 	Instruction inst = { "", "", -1, -1, -1, NULL, "" };
 	Inst.push_back(inst);
 
-	// cout << "Hello World!\n";
 	string extract = "";
 
 	// 截出一段文字
 	while (true) {
-		int start = content.find_first_not_of(" \t,:"); //cout << start << "\t";
-		int end = content.find_first_of(" \t,:\n"); //cout << end << "\t";
+		int start = content.find_first_not_of(" \t,:");		//cout << start << "\t";
+		int end = content.find_first_of(" \t,:\n");			//cout << end << "\t";
 		extract = content.substr(0, end);
 		Data_Saving(extract, inst_n, content.length());
 		if (end == -1)
@@ -104,20 +103,16 @@ void string_cut(string content, int inst_n) // 進行字串處理
 		//對字串做整理
 		content = content.substr(end, content.length() - extract.length());
 		int split_n = content.find_first_not_of("\t, :");
-		if (split_n == string::npos) // 如果已經到字串尾巴就跳出
+		if (split_n == string::npos)						// 如果已經到字串尾巴就跳出
 			return;
 		content = content.substr(split_n, content.length() - split_n + 1);
-		//cout << "." << content << endl;
 	}
 }
 
 void Data_Saving(string s, int inst, int rest_n)
 {
-	// cout << "\t";
-
 	if (s.find("0x") != string::npos) {
 		Inst[inst].addr = s;
-		// cout << Inst[inst].addr;
 		return;
 	}
 
@@ -255,6 +250,7 @@ int Find_matching_addr(string addr)
 	}
 }
 
+
 void TBH_predict(int instruction_number, int entry, char outcome)
 {
 	// 根據history做出predict
@@ -285,8 +281,6 @@ void TBH_predict(int instruction_number, int entry, char outcome)
 
 	string tbh_result = "";
 
-	cout << "Entry No." << (entry + 1);
-	cout << "\t";
 	tbh_result = "(" + to_string(Tbh[entry].history[0]) + to_string(Tbh[entry].history[1]);
 	for (int i = 0; i < 4; i++) {
 		tbh_result = tbh_result + ",";
@@ -305,22 +299,9 @@ void TBH_predict(int instruction_number, int entry, char outcome)
 			break;
 		}
 	}
-	tbh_result = tbh_result + ")\tP:" + predict + "\tO:" + outcome + "\tG:" + to_string(guess);
-	cout << tbh_result + "\t";
-	cout << Inst_history[instruction_number] << endl;
 
-	Tbh[entry].h.push_back(tbh_result + "\t" + Inst_history[instruction_number]);
+	tbh_result = tbh_result + ")";
 
+	Tbh[entry].h.push_back(Inst_history[instruction_number] + "\t" + tbh_result);
 
 }
-
-// 【好用的東西】
-//string delimiter = " ";
-//size_t pos;
-//std::string token;
-//while ((pos = content.find(delimiter)) != string::npos) {
-//	token = content.substr(0, pos);
-//	cout << token << "\t";
-//	content.erase(0, pos + delimiter.length());
-//}
-//cout << endl;
