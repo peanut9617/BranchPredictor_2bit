@@ -7,7 +7,7 @@ Output範例 : 可以供輸入number of entries in BHT
 
 RISCV.txt:
 
-        0x110		li R1,0
+        0x110	    li R1,0
 
         0x114	    li R2,4
 
